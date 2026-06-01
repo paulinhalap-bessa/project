@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – Cachos Brasil | Reunião Geral Mkt 27/05/2026</title>
+  <style>
+    :root {
+      --rosa: #c8336b;
+      --rosa-light: #f9e0ea;
+      --dourado: #d4a017;
+      --dourado-light: #fdf4dc;
+      --verde: #2e7d57;
+      --verde-light: #e0f4ec;
+      --cinza: #6b7280;
+      --bg: #fafafa;
+      --card: #ffffff;
+      --border: #e5e7eb;
+      --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: #1f2937;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    header {
+      background: linear-gradient(135deg, var(--rosa) 0%, #8b1a45 100%);
+      color: white;
+      padding: 28px 32px 22px;
+    }
+    header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p  { opacity: 0.85; font-size: 0.92rem; margin-top: 4px; }
+    .header-meta {
+      display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap;
+    }
+    .badge {
+      background: rgba(255,255,255,0.18);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    /* PROGRESS GLOBAL */
+    .progress-bar-wrap {
+      background: rgba(255,255,255,0.25);
+      border-radius: 8px; height: 8px; margin-top: 14px; overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%; background: #fff; border-radius: 8px;
+      transition: width 0.4s;
+    }
+    .progress-label { font-size: 0.8rem; opacity: 0.9; margin-top: 5px; }
+
+    /* NAV TABS */
+    nav {
+      display: flex; gap: 0; background: #fff;
+      border-bottom: 2px solid var(--border);
+      padding: 0 32px;
+      overflow-x: auto;
+    }
+    nav button {
+      padding: 14px 22px; font-size: 0.9rem; font-weight: 600;
+      border: none; background: none; cursor: pointer; color: var(--cinza);
+      border-bottom: 3px solid transparent; margin-bottom: -2px;
+      white-space: nowrap; transition: all 0.2s;
+    }
+    nav button.active { color: var(--rosa); border-bottom-color: var(--rosa); }
+    nav button:hover:not(.active) { color: #374151; }
+
+    /* LAYOUT */
+    main { max-width: 980px; margin: 0 auto; padding: 28px 24px 60px; }
+
+    /* SECTION */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr));
+      gap: 14px; margin-bottom: 28px;
+    }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 18px;
+      box-shadow: var(--shadow); text-align: center;
+    }
+    .stat-card .num { font-size: 2rem; font-weight: 700; }
+    .stat-card .lbl { font-size: 0.78rem; color: var(--cinza); margin-top: 3px; }
+    .stat-card.verde .num { color: var(--verde); }
+    .stat-card.rosa  .num { color: var(--rosa); }
+    .stat-card.gold  .num { color: var(--dourado); }
+
+    /* CARD */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .icon { font-size: 1.2rem; }
+
+    /* TASK ITEM */
+    .task-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 11px 14px; border-radius: 10px; margin-bottom: 8px;
+      transition: background 0.15s; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .task-item:hover { background: #f9fafb; border-color: var(--border); }
+    .task-item.done { opacity: 0.55; }
+    .task-item.done .task-text { text-decoration: line-through; color: var(--cinza); }
+
+    .task-check {
+      width: 20px; height: 20px; min-width: 20px;
+      border-radius: 6px; border: 2px solid #d1d5db;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; background: #fff; margin-top: 1px;
+    }
+    .task-item.done .task-check {
+      background: var(--verde); border-color: var(--verde);
+    }
+    .task-check svg { display: none; }
+    .task-item.done .task-check svg { display: block; }
+
+    .task-body { flex: 1; }
+    .task-text { font-size: 0.92rem; line-height: 1.45; }
+    .task-meta {
+      display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.72rem; font-weight: 600; padding: 2px 10px;
+      border-radius: 20px; letter-spacing: 0.3px;
+    }
+    .tag.urgente  { background: #fee2e2; color: #b91c1c; }
+    .tag.prazo    { background: var(--dourado-light); color: #92400e; }
+    .tag.em-curso { background: #dbeafe; color: #1d4ed8; }
+    .tag.normal   { background: var(--border); color: var(--cinza); }
+    .tag.app      { background: #f3e8ff; color: #7e22ce; }
+    .tag.yt       { background: #fee2e2; color: #991b1b; }
+
+    /* PERSON CARDS */
+    .person-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+      gap: 18px;
+    }
+    .person-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden; box-shadow: var(--shadow);
+    }
+    .person-header {
+      padding: 14px 18px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+    .person-name { font-weight: 700; font-size: 0.95rem; }
+    .person-role { font-size: 0.78rem; color: var(--cinza); margin-top: 1px; }
+    .person-tasks { padding: 0 14px 14px; }
+    .person-task {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 9px 10px; border-radius: 8px; margin-bottom: 6px;
+      transition: background 0.15s; cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .person-task:hover { background: #f9fafb; border-color: var(--border); }
+    .person-task.done { opacity: 0.5; }
+    .person-task.done .pt-text { text-decoration: line-through; color: var(--cinza); }
+    .pt-check {
+      width: 18px; height: 18px; min-width: 18px;
+      border-radius: 5px; border: 2px solid #d1d5db;
+      display: flex; align-items: center; justify-content: center;
+      background: #fff; margin-top: 1px; transition: all 0.2s;
+    }
+    .person-task.done .pt-check {
+      background: var(--verde); border-color: var(--verde);
+    }
+    .person-task.done .pt-check svg { display: block !important; }
+    .pt-text { font-size: 0.86rem; line-height: 1.4; flex: 1; }
+    .person-progress {
+      margin: 0 18px 14px;
+    }
+    .mini-bar-wrap {
+      background: var(--border); border-radius: 4px; height: 5px; overflow: hidden;
+    }
+    .mini-bar-fill {
+      height: 100%; border-radius: 4px; background: var(--verde);
+      transition: width 0.4s;
+    }
+    .mini-bar-label {
+      font-size: 0.75rem; color: var(--cinza); margin-top: 4px;
+    }
+
+    /* TIMELINE */
+    .timeline { position: relative; padding-left: 28px; }
+    .timeline::before {
+      content: ''; position: absolute; left: 8px; top: 8px; bottom: 8px;
+      width: 2px; background: var(--border);
+    }
+    .tl-item { position: relative; margin-bottom: 20px; }
+    .tl-dot {
+      position: absolute; left: -24px; top: 3px;
+      width: 14px; height: 14px; border-radius: 50%;
+      border: 2px solid #fff; box-shadow: 0 0 0 2px var(--border);
+    }
+    .tl-dot.hot  { background: var(--rosa); box-shadow: 0 0 0 2px var(--rosa-light); }
+    .tl-dot.warm { background: var(--dourado); box-shadow: 0 0 0 2px var(--dourado-light); }
+    .tl-dot.cool { background: var(--verde); box-shadow: 0 0 0 2px var(--verde-light); }
+    .tl-date { font-size: 0.78rem; font-weight: 700; color: var(--cinza); margin-bottom: 2px; }
+    .tl-desc { font-size: 0.9rem; }
+    .tl-sub  { font-size: 0.8rem; color: var(--cinza); margin-top: 3px; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .filter-btn {
+      padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.82rem; font-weight: 600;
+      cursor: pointer; color: var(--cinza); transition: all 0.15s;
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--rosa); color: #fff; border-color: var(--rosa);
+    }
+
+    /* RESET BTN */
+    .reset-btn {
+      padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
+      background: #fff; font-size: 0.82rem; cursor: pointer; color: var(--cinza);
+      margin-bottom: 20px; transition: all 0.15s;
+    }
+    .reset-btn:hover { border-color: var(--rosa); color: var(--rosa); }
+
+    @media (max-width: 640px) {
+      header { padding: 20px 18px 18px; }
+      main { padding: 18px 14px 60px; }
+      nav { padding: 0 14px; }
+      nav button { padding: 12px 14px; font-size: 0.84rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📋 Dashboard Cachos Brasil</h1>
+  <p>Reunião Geral de Marketing · 27 de maio de 2026</p>
+  <div class="header-meta">
+    <span class="badge">🇧🇷 Brasil + 🇵🇹 Portugal</span>
+    <span class="badge" id="global-badge">0% concluído</span>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="global-bar" style="width:0%"></div>
+  </div>
+  <p class="progress-label" id="global-label">0 de 0 itens concluídos</p>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('meu')">✅ Meus compromissos</button>
+  <button onclick="showTab('equipe')">👥 Monitorar equipe</button>
+  <button onclick="showTab('timeline')">📅 Cronograma</button>
+</nav>
+
+<main>
+
+  <!-- ========== TAB: MEUS COMPROMISSOS ========== -->
+  <section class="section active" id="tab-meu">
+
+    <div class="stats-row" id="stats-meu"></div>
+
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterMeu('todos', this)">Todos</button>
+      <button class="filter-btn" onclick="filterMeu('urgente', this)">🔴 Urgente</button>
+      <button class="filter-btn" onclick="filterMeu('app', this)">📱 Aplicativo</button>
+      <button class="filter-btn" onclick="filterMeu('yt', this)">▶️ YouTube</button>
+      <button class="filter-btn" onclick="filterMeu('pendente', this)">⏳ Pendentes</button>
+      <button class="filter-btn" onclick="filterMeu('feito', this)">✅ Concluídos</button>
+    </div>
+
+    <div id="meu-tasks-container"></div>
+
+  </section>
+
+  <!-- ========== TAB: EQUIPE ========== -->
+  <section class="section" id="tab-equipe">
+
+    <div class="stats-row" id="stats-equipe"></div>
+
+    <button class="reset-btn" onclick="resetAll()">↺ Resetar todos os status</button>
+
+    <div class="person-grid" id="person-grid"></div>
+
+  </section>
+
+  <!-- ========== TAB: CRONOGRAMA ========== -->
+  <section class="section" id="tab-timeline">
+
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> Datas-chave – Junho / Julho 2026</div>
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-dot hot"></div>
+          <div class="tl-date">02/06 (terça) · 09h30</div>
+          <div class="tl-desc">Reunião com franqueados – apresentação do aplicativo Tricos</div>
+          <div class="tl-sub">Participar: Ana Paula + Wbatan (presença de Ana Paula confirmada)</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot hot"></div>
+          <div class="tl-date">Semana de 02/06</div>
+          <div class="tl-desc">Criar grupo WhatsApp Brasil + Portugal & cadastrar equipe Portugal no Trello</div>
+          <div class="tl-sub">Aguardar e-mails de Juliana, Jennifer e Camila</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot warm"></div>
+          <div class="tl-date">Semana de 02/06</div>
+          <div class="tl-desc">Reunião Ana Paula + Ester – alinhamento criativos e próximos passos (Portugal)</div>
+          <div class="tl-sub">Julia oliveira aguarda essa reunião para avançar com campanhas</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot warm"></div>
+          <div class="tl-date">Semana de 02/06</div>
+          <div class="tl-desc">Montar cronograma de junho para vídeos YouTube (toda quinta-feira)</div>
+          <div class="tl-sub">Roteiros enviados à Camila com 2 dias de antecedência</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot warm"></div>
+          <div class="tl-date">01/07 – 15/07</div>
+          <div class="tl-desc">Franqueados testam o aplicativo Tricos (fase beta)</div>
+          <div class="tl-sub">Wbatan disponibiliza acesso na reunião de 02/06</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot hot"></div>
+          <div class="tl-date">19/06 (quinta)</div>
+          <div class="tl-desc">🚀 Iniciar campanha de lista de espera para Hair Brasília</div>
+          <div class="tl-sub">30 dias antes do lançamento público — criar landing page ou formulário</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot cool"></div>
+          <div class="tl-date">16/06</div>
+          <div class="tl-desc">Wbatan chega ao Brasil – rever cronograma de gravações com Ana Paula + Duda</div>
+          <div class="tl-sub">Definir novo dia da semana para gravar no Brasil</div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot hot"></div>
+          <div class="tl-date">19–20/07</div>
+          <div class="tl-desc">🎉 Lançamento público do app Tricos no Hair Brasília</div>
+          <div class="tl-sub">Campanha preparada por Camilla Rodrigues. Toda equipe envolve</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="icon">💡</span> Decisões estratégicas registradas</div>
+      <ul style="list-style:none; display:flex; flex-direction:column; gap:10px;">
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>📱</span><span>App Tricos: diagnóstico capilar com IA, voltado a profissionais. Abre para o mercado geral para sair na frente da concorrência. Atualização já desenhada para 3 meses após lançamento.</span></li>
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>💰</span><span>Modelo de negócio futuro: lista de espera gratuita → taxa R$ 9,90/mês → venda de espaço de mídia para marcas parceiras.</span></li>
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>🎯</span><span>Estratégia YouTube: toda quinta-feira. Linha editorial: experimentos, desmistificação de mitos, reação a conteúdos virais. Shorts para cada vídeo (10-15 mil views em 24h).</span></li>
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>🌍</span><span>Terminologia inclusiva: usar "crespos + cachos + caracóis" nos criativos para atender Brasil, Portugal e Angola sem atrito.</span></li>
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>📊</span><span>Campanhas: 5–9 criativos no gerenciador para identificar o vídeo campeão (último: 12k views, 79 seguidores a €0,32).</span></li>
+        <li style="display:flex;gap:10px;align-items:flex-start"><span>🏗️</span><span>Hierarquia: Ana Paula centraliza todas as cobranças e reporta à Adriana/Wbatan. Lucas tem linha direta com Wbatan, mas 80% do trabalho passa por Ana Paula.</span></li>
+      </ul>
+    </div>
+
+  </section>
+
+</main>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+const MEU_TASKS = [
+  { id:'m1', text:'Criar grupo WhatsApp integrando equipes Brasil e Portugal', tags:['urgente'], group:'Comunicação' },
+  { id:'m2', text:'Cadastrar equipe de Portugal no Trello (aguardar e-mails de Juliana, Jennifer e Camila)', tags:['urgente'], group:'Comunicação' },
+  { id:'m3', text:'Criar lista de espera para Hair Brasília (iniciar em 19/06 – 30 dias antes do lançamento)', tags:['urgente','app','prazo'], group:'App Tricos' },
+  { id:'m4', text:'Pesquisar principais dúvidas dos usuários em buscadores e YouTube para definir pautas de vídeo', tags:['yt'], group:'Conteúdo' },
+  { id:'m5', text:'Participar da reunião com franqueados – 02/06 às 09h30 (apresentação do app Tricos)', tags:['urgente','prazo'], group:'App Tricos' },
+  { id:'m6', text:'Elaborar documento dividindo campanhas entre Brasil e Portugal (enviar para Julia oliveira)', tags:['em-curso'], group:'Estratégia' },
+  { id:'m7', text:'Montar cronograma mensal de temas para vídeos do YouTube (toda quinta-feira)', tags:['yt'], group:'Conteúdo' },
+  { id:'m8', text:'Cobrar Camila regularmente para que temas e roteiros sejam entregues com 2 dias de antecedência', tags:['yt'], group:'Conteúdo' },
+  { id:'m9', text:'Reagendar gravações no Brasil após 16/06 (Wbatan chega ao Brasil) – alinhar com Duda', tags:['prazo'], group:'Conteúdo' },
+  { id:'m10', text:'Realizar reunião com Ester para alinhar criativos e próximos passos (Portugal)', tags:['urgente'], group:'Estratégia' },
+  { id:'m11', text:'Enviar roteiros/pautas semanais à Camila sempre com 2 dias de antecedência', tags:['yt'], group:'Conteúdo' },
+  { id:'m12', text:'Montar base de roteiro para vídeo de apresentação do app Tricos (masterclass para academia)', tags:['app'], group:'App Tricos' },
+];
+
+const TEAM = [
+  {
+    id: 'lucas',
+    name: 'Lucas Henrique (Smash)',
+    role: 'Tráfego pago · Sites · E-commerce',
+    color: '#1d4ed8',
+    emoji: 'LH',
+    tasks: [
+      { id:'t1', text:'🚨 Publicar a home do site (estava prometido e não foi no ar – cobrado por Wbatan)', tags:['urgente'] },
+    ]
+  },
+  {
+    id: 'camilla',
+    name: 'Camilla Rodrigues',
+    role: 'Redes sociais · Europa/Portugal',
+    color: '#7e22ce',
+    emoji: 'CR',
+    tasks: [
+      { id:'t2', text:'Desenvolver estratégia e materiais para campanha de lançamento do app Tricos', tags:['app','urgente'] },
+      { id:'t3', text:'Enviar e-mail para cadastro no Trello', tags:['urgente'] },
+      { id:'t4', text:'Manter constância de posts e entrega de roteiros toda semana', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'wbatan',
+    name: 'Wbatan Paes',
+    role: 'Fundador · Gravações YouTube',
+    color: '#c8336b',
+    emoji: 'WP',
+    tasks: [
+      { id:'t5', text:'Gravar aula explicativa (masterclass) sobre o app Tricos para incluir na academia', tags:['app'] },
+      { id:'t6', text:'Gravar vídeos toda quinta-feira conforme cronograma enviado por Ana Paula', tags:['yt'] },
+      { id:'t7', text:'Apresentar app Tricos aos franqueados na reunião de 02/06 às 09h30', tags:['urgente','prazo'] },
+    ]
+  },
+  {
+    id: 'julia',
+    name: 'Julia Oliveira',
+    role: 'Estratégia Portugal · Campanhas',
+    color: '#0891b2',
+    emoji: 'JO',
+    tasks: [
+      { id:'t8', text:'Verificar feiras de inovação digital em Lisboa e Porto (para lançamento do app)', tags:['app'] },
+      { id:'t9', text:'Entregar lista de eventos e feiras no Brasil para Wbatan e Ana Paula', tags:['prazo'] },
+      { id:'t10', text:'Aguardar reunião Ana Paula + Ester para avançar com criativos e remarketing Portugal', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'juliana',
+    name: 'Juliana',
+    role: 'Academia Cachos Brasil (Portugal)',
+    color: '#059669',
+    emoji: 'JU',
+    tasks: [
+      { id:'t11', text:'Enviar e-mail para cadastro no Trello', tags:['urgente'] },
+      { id:'t12', text:'Gerenciar demandas da Academia Cachos Brasil em Portugal', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'jennifer',
+    name: 'Jennifer',
+    role: 'E-commerce Portugal',
+    color: '#d97706',
+    emoji: 'JE',
+    tasks: [
+      { id:'t13', text:'Enviar e-mail para cadastro no Trello', tags:['urgente'] },
+      { id:'t14', text:'Gerir e-commerce de Portugal', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'duda',
+    name: 'Duda (Maria Eduarda)',
+    role: 'Social Media · Produção Audiovisual Brasil',
+    color: '#e11d48',
+    emoji: 'ME',
+    tasks: [
+      { id:'t15', text:'Continuar subindo Shorts semanalmente (todos os vídeos do Instagram → YouTube Shorts)', tags:['yt','em-curso'] },
+      { id:'t16', text:'Alinhar nova data de gravação no Brasil com Ana Paula (após 16/06)', tags:['prazo'] },
+    ]
+  },
+  {
+    id: 'jonas',
+    name: 'Jonas Rocha',
+    role: 'Design · Material offline Brasil',
+    color: '#4f46e5',
+    emoji: 'JR',
+    tasks: [
+      { id:'t17', text:'Reestruturar e produzir materiais offline para franquias Brasil', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'suzi',
+    name: 'Suzi (Suzany)',
+    role: 'Relacionamento com Franqueados',
+    color: '#0f766e',
+    emoji: 'SU',
+    tasks: [
+      { id:'t18', text:'Enviar materiais semanais para as 12-13 franquias do Brasil', tags:['em-curso'] },
+      { id:'t19', text:'Centralizar demandas de marketing dos franqueados', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'ester',
+    name: 'Ester',
+    role: 'Direção de Arte (integração)',
+    color: '#7c3aed',
+    emoji: 'ES',
+    tasks: [
+      { id:'t20', text:'Participar de reunião com Ana Paula e Julia para alinhar criativos Portugal', tags:['urgente'] },
+      { id:'t21', text:'Apoiar demandas de arte da Academia conforme direcionamento de Ana Paula', tags:['em-curso'] },
+    ]
+  },
+  {
+    id: 'grupo',
+    name: 'Toda a equipe',
+    role: 'Demandas coletivas',
+    color: '#374151',
+    emoji: '👥',
+    tasks: [
+      { id:'t22', text:'Enviar ideias para campanha de lançamento do app Tricos para Ana Paula', tags:['app','urgente'] },
+      { id:'t23', text:'Usar terminologia inclusiva nos criativos: "crespos + cachos + caracóis"', tags:['em-curso'] },
+    ]
+  },
+];
+
+// ─────────────────────────────────────────────
+//  STATE – localStorage
+// ─────────────────────────────────────────────
+function getState() {
+  try { return JSON.parse(localStorage.getItem('cb_state') || '{}'); } catch { return {}; }
+}
+function saveState(s) { localStorage.setItem('cb_state', JSON.stringify(s)); }
+function toggleItem(id) {
+  const s = getState(); s[id] = !s[id]; saveState(s); render();
+}
+
+// ─────────────────────────────────────────────
+//  RENDER
+// ─────────────────────────────────────────────
+const CHECK_SVG = `<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7L10 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+let currentMeuFilter = 'todos';
+
+function renderMeuTasks() {
+  const s = getState();
+  const groups = {};
+  MEU_TASKS.forEach(t => {
+    const show =
+      currentMeuFilter === 'todos'   ? true :
+      currentMeuFilter === 'pendente'? !s[t.id] :
+      currentMeuFilter === 'feito'   ? !!s[t.id] :
+      t.tags.includes(currentMeuFilter);
+    if (!show) return;
+    if (!groups[t.group]) groups[t.group] = [];
+    groups[t.group].push(t);
+  });
+
+  const container = document.getElementById('meu-tasks-container');
+  container.innerHTML = '';
+  Object.entries(groups).forEach(([group, tasks]) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `<div class="card-title"><span class="icon">📁</span>${group}</div>`;
+    tasks.forEach(t => {
+      const done = !!s[t.id];
+      const div = document.createElement('div');
+      div.className = 'task-item' + (done ? ' done' : '');
+      div.onclick = () => toggleItem(t.id);
+      div.innerHTML = `
+        <div class="task-check">${CHECK_SVG}</div>
+        <div class="task-body">
+          <div class="task-text">${t.text}</div>
+          <div class="task-meta">${t.tags.map(tg => `<span class="tag ${tg}">${tagLabel(tg)}</span>`).join('')}</div>
+        </div>`;
+      card.appendChild(div);
+    });
+    container.appendChild(card);
+  });
+
+  // stats
+  const total = MEU_TASKS.length;
+  const done  = MEU_TASKS.filter(t => !!s[t.id]).length;
+  const urg   = MEU_TASKS.filter(t => t.tags.includes('urgente') && !s[t.id]).length;
+  document.getElementById('stats-meu').innerHTML = `
+    <div class="stat-card verde"><div class="num">${done}</div><div class="lbl">Concluídos</div></div>
+    <div class="stat-card rosa"><div class="num">${total - done}</div><div class="lbl">Pendentes</div></div>
+    <div class="stat-card gold"><div class="num">${urg}</div><div class="lbl">Urgentes abertos</div></div>`;
+}
+
+function renderEquipe() {
+  const s = getState();
+  const allTeamTasks = TEAM.flatMap(p => p.tasks);
+  const doneCount = allTeamTasks.filter(t => !!s[t.id]).length;
+
+  document.getElementById('stats-equipe').innerHTML = `
+    <div class="stat-card verde"><div class="num">${doneCount}</div><div class="lbl">Concluídos (equipe)</div></div>
+    <div class="stat-card rosa"><div class="num">${allTeamTasks.length - doneCount}</div><div class="lbl">Pendentes (equipe)</div></div>
+    <div class="stat-card gold"><div class="num">${TEAM.length}</div><div class="lbl">Pessoas monitoradas</div></div>`;
+
+  const grid = document.getElementById('person-grid');
+  grid.innerHTML = '';
+  TEAM.forEach(p => {
+    const done = p.tasks.filter(t => !!s[t.id]).length;
+    const total = p.tasks.length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    const card = document.createElement('div');
+    card.className = 'person-card';
+    card.innerHTML = `
+      <div class="person-header" style="background:${p.color}18">
+        <div class="avatar" style="background:${p.color}">${p.emoji.length <= 2 && !p.emoji.includes(' ') ? p.emoji : p.emoji.slice(0,2)}</div>
+        <div><div class="person-name">${p.name}</div><div class="person-role">${p.role}</div></div>
+      </div>
+      <div class="person-progress">
+        <div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:${pct}%;background:${p.color}"></div></div>
+        <div class="mini-bar-label">${done}/${total} · ${pct}%</div>
+      </div>
+      <div class="person-tasks">
+        ${p.tasks.map(t => {
+          const d = !!s[t.id];
+          return `<div class="person-task${d?' done':''}" onclick="toggleItem('${t.id}')">
+            <div class="pt-check" style="${d?`background:${p.color};border-color:${p.color}`:''}">
+              <svg style="display:${d?'block':'none'}" width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 3.5L3.5 6L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div class="pt-text">${t.text}
+              <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:3px">${(t.tags||[]).map(tg=>`<span class="tag ${tg}" style="font-size:0.68rem">${tagLabel(tg)}</span>`).join('')}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function renderGlobal() {
+  const s = getState();
+  const all = [...MEU_TASKS, ...TEAM.flatMap(p=>p.tasks)];
+  const done = all.filter(t=>!!s[t.id]).length;
+  const pct = all.length ? Math.round(done/all.length*100) : 0;
+  document.getElementById('global-bar').style.width = pct + '%';
+  document.getElementById('global-badge').textContent = pct + '% concluído';
+  document.getElementById('global-label').textContent = `${done} de ${all.length} itens concluídos`;
+}
+
+function render() {
+  renderMeuTasks();
+  renderEquipe();
+  renderGlobal();
+}
+
+// ─────────────────────────────────────────────
+//  HELPERS
+// ─────────────────────────────────────────────
+function tagLabel(t) {
+  return { urgente:'🔴 Urgente', app:'📱 App', yt:'▶️ YouTube', 'em-curso':'🔵 Em curso', prazo:'📅 Prazo', normal:'Normal' }[t] || t;
+}
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.querySelectorAll('nav button').forEach((b,i) => {
+    b.classList.toggle('active', ['meu','equipe','timeline'][i] === tab);
+  });
+}
+
+function filterMeu(filter, btn) {
+  currentMeuFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMeuTasks();
+}
+
+function resetAll() {
+  if (confirm('Resetar todos os status da equipe para pendente?')) {
+    const s = getState();
+    TEAM.flatMap(p=>p.tasks).forEach(t => delete s[t.id]);
+    saveState(s);
+    render();
+  }
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
