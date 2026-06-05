@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard – Cachos Brasil | Reunião Geral Mkt 27/05/2026</title>
+  <title>Dashboard Cachos Brasil – Demandas Gerenciais Mkt</title>
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet"/>
   <style>
     :root {
@@ -332,7 +332,7 @@
 
 <!-- ── NAV ── -->
 <nav>
-  <button class="active" onclick="showTab('meu')">✅ Meus compromissos</button>
+  <button class="active" onclick="showTab('meu')">✅ Demandas Gerenciais Mkt</button>
   <button onclick="showTab('equipe')">👥 Monitorar equipe</button>
   <button onclick="showTab('timeline')">📅 Cronograma</button>
 </nav>
@@ -436,71 +436,121 @@
 <script>
 // ── DATA ──
 const MEU_TASKS = [
-  { id:'m1',  text:'Criar grupo WhatsApp integrando equipes Brasil e Portugal',                                  tags:['urgente'],            group:'Comunicação' },
-  { id:'m2',  text:'Cadastrar equipe de Portugal no Trello (aguardar e-mails de Juliana, Jennifer e Camila)',   tags:['urgente'],            group:'Comunicação' },
-  { id:'m3',  text:'Criar lista de espera para Hair Brasília (iniciar em 19/06 – 30 dias antes do lançamento)', tags:['urgente','app','prazo'],group:'App Tricos' },
-  { id:'m4',  text:'Pesquisar principais dúvidas dos usuários em buscadores e YouTube para definir pautas',     tags:['yt'],                 group:'Conteúdo' },
-  { id:'m5',  text:'Participar da reunião com franqueados – 02/06 às 09h30 (apresentação do app Tricos)',       tags:['urgente','prazo'],    group:'App Tricos' },
-  { id:'m6',  text:'Elaborar documento dividindo campanhas entre Brasil e Portugal (enviar para Julia oliveira)',tags:['em-curso'],           group:'Estratégia' },
-  { id:'m7',  text:'Montar cronograma mensal de temas para vídeos do YouTube (toda quinta-feira)',              tags:['yt'],                 group:'Conteúdo' },
-  { id:'m8',  text:'Cobrar Camila regularmente para que temas e roteiros sejam entregues com 2 dias de antecedência', tags:['yt'],          group:'Conteúdo' },
-  { id:'m9',  text:'Reagendar gravações no Brasil após 16/06 (Wbatan chega) – alinhar com Duda',               tags:['prazo'],              group:'Conteúdo' },
-  { id:'m10', text:'Realizar reunião com Ester para alinhar criativos e próximos passos (Portugal)',            tags:['urgente'],            group:'Estratégia' },
-  { id:'m11', text:'Enviar roteiros/pautas semanais à Camila sempre com 2 dias de antecedência',               tags:['yt'],                 group:'Conteúdo' },
-  { id:'m12', text:'Montar base de roteiro para vídeo de apresentação do app Tricos (masterclass para academia)', tags:['app'],             group:'App Tricos' },
+  // App Tricos
+  { id:'m3',  text:'Criar lista de espera para Hair Brasília (iniciar em 19/06 – 30 dias antes do lançamento)', tags:['urgente','app','prazo'], group:'App Tricos' },
+  { id:'m5',  text:'Participar da reunião com franqueados – 02/06 às 09h30 (apresentação do app Tricos)',       tags:['urgente','prazo'],    group:'App Tricos', done:true },
+  { id:'m12', text:'Montar base de roteiro para vídeo de apresentação do app Tricos (masterclass para academia)', tags:['app'],              group:'App Tricos' },
+
+  // Estratégia
+  { id:'m6',  text:'Elaborar documento dividindo campanhas entre Brasil e Portugal (enviar para Julia oliveira)', tags:['em-curso'],          group:'Estratégia' },
+  { id:'m10', text:'Realizar reunião com Ester para alinhar criativos e próximos passos (Portugal)',             tags:['urgente'],            group:'Estratégia', done:true },
+
+  // Hair Brasília
+  { id:'h1',  text:'Fechar roteiro de vídeo do Hair Brasília',                           tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h2',  text:'Enviar o roteiro fechado para edição com a Duda',                    tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h3',  text:'Aprovação final do vídeo e envio para equipe do Hair Brasília',      tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h4',  text:'Fechar ação com influenciadores junto ao Wbatan e Drika',            tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h5',  text:'Enviar os kits para a agência indicada para o Hair Brasília',        tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h6',  text:'Incluir a logo do Sebrae em todas as artes do Hair Brasília',        tags:['urgente'],  group:'Hair Brasília' },
+  { id:'h7',  text:'Fechar cronograma de ações com a Adriana',                           tags:['urgente'],  group:'Hair Brasília' },
+
+  // Academia Cachos Brasil (BR e PT)
+  { id:'a1',  text:'Enviar os acessos para Juliana',                                               tags:['urgente'],   group:'Academia Cachos Brasil (BR e PT)' },
+  { id:'a2',  text:'Aprovar o planejamento de ações a ser enviado pela Juliana até dia 15/05',     tags:['prazo'],     group:'Academia Cachos Brasil (BR e PT)' },
+  { id:'a3',  text:'Fazer reunião com Juliana para alinhamentos após o envio',                     tags:['em-curso'],  group:'Academia Cachos Brasil (BR e PT)' },
+  { id:'a4',  text:'Aprovar as artes enviadas pela Esther',                                        tags:['em-curso'],  group:'Academia Cachos Brasil (BR e PT)' },
+
+  // E-commerce BR
+  { id:'e1',  text:'Alinhar com o Lucas as campanhas dos produtos',                      tags:['em-curso'],  group:'E-commerce BR' },
+  { id:'e2',  text:'Ampliar as segmentações regionais',                                  tags:['em-curso'],  group:'E-commerce BR' },
+  { id:'e3',  text:'Incluir campanhas no feed orgânico',                                 tags:['em-curso'],  group:'E-commerce BR' },
+
+  // E-commerce PT
+  { id:'ep1', text:'Receber o planejamento solicitado para a Jenniffer até o dia 15/06', tags:['prazo'],     group:'E-commerce PT' },
+  { id:'ep2', text:'Pedir os relatórios de campanha de Ads',                             tags:['em-curso'],  group:'E-commerce PT' },
+  { id:'ep3', text:'Acompanhar a execução do que foi solicitado',                        tags:['em-curso'],  group:'E-commerce PT' },
+
+  // Geral
+  { id:'g1',  text:'Fazer relatório do Mkt para reunião mensal de resultados',           tags:['urgente'],   group:'Geral' },
+  { id:'g2',  text:'Fechar data de reunião para alinhamento com a Duda',                 tags:['urgente'],   group:'Geral' },
+  { id:'g3',  text:'Fechar a apresentação institucional com base na apresentação da Apex', tags:['em-curso'],group:'Geral' },
+  { id:'g4',  text:'Fazer o roteiro para a gravação da Adriana do dia 12/06',            tags:['prazo'],     group:'Geral' },
+  { id:'g5',  text:'Aprovar os conteúdos da semana do dia 08 ao dia 12/06',              tags:['prazo'],     group:'Geral' },
+  { id:'g6',  text:'Gerenciar as demandas da semana',                                    tags:['em-curso'],  group:'Geral' },
 ];
 
 const TEAM = [
   { id:'lucas',    name:'Lucas Henrique (Smash)', role:'Tráfego pago · Sites · E-commerce',       color:'#1d4ed8', emoji:'LH',
     tasks:[
-      { id:'t1', text:'🚨 Publicar a home do site – estava prometido e cobrado por Wbatan', tags:['urgente'] },
+      { id:'t1',   text:'🚨 Publicar a home do site – estava prometido e cobrado por Wbatan', tags:['urgente'], done:true },
+      { id:'tl2',  text:'Modificar imagem da LP das franquias',                               tags:['em-curso'] },
+      { id:'tl3',  text:'Montar campanha para franquias',                                     tags:['em-curso'] },
+      { id:'tl4',  text:'Montar relatório de campanhas atuais para a reunião mensal',         tags:['urgente'] },
+      { id:'tl5',  text:'Criar o portfólio de negócios da Academia CB do Brasil e incluir a Juliana', tags:['em-curso'] },
     ]},
   { id:'camilla',  name:'Camilla Rodrigues',       role:'Redes sociais · Europa / Portugal',       color:'#7e22ce', emoji:'CR',
     tasks:[
-      { id:'t2', text:'Desenvolver estratégia e materiais para campanha de lançamento do app Tricos', tags:['app','urgente'] },
-      { id:'t3', text:'Enviar e-mail para cadastro no Trello',                                        tags:['urgente'] },
-      { id:'t4', text:'Manter constância de posts e entrega de roteiros semanais',                    tags:['em-curso'] },
+      { id:'t2',  text:'Desenvolver estratégia e materiais para campanha de lançamento do app Tricos', tags:['app','urgente'] },
+      { id:'t3',  text:'Enviar e-mail para cadastro no Trello',                                        tags:['urgente'], done:true },
+      { id:'t4',  text:'Manter constância de posts e entrega de roteiros semanais',                    tags:['em-curso'] },
     ]},
-  { id:'wbatan',   name:'Wbatan Paes',             role:'Fundador · Gravações YouTube',            color:'#F51021', emoji:'WP',
+  { id:'wbatan',   name:'Adriana e Wbatan',        role:'Fundador · Gravações YouTube',            color:'#F51021', emoji:'AW',
     tasks:[
-      { id:'t5', text:'Gravar masterclass sobre o app Tricos para incluir na academia como bônus',    tags:['app'] },
-      { id:'t6', text:'Gravar vídeos toda quinta conforme cronograma enviado por Ana Paula',           tags:['yt'] },
-      { id:'t7', text:'Apresentar app Tricos aos franqueados – 02/06 às 09h30',                       tags:['urgente','prazo'] },
+      { id:'t5',  text:'Gravar masterclass sobre o app Tricos para incluir na academia como bônus',    tags:['app'] },
+      { id:'t6',  text:'Gravar vídeos toda quinta conforme cronograma enviado por Ana Paula',           tags:['yt'], done:true },
+      { id:'t7',  text:'Apresentar app Tricos aos franqueados – 02/06 às 09h30',                       tags:['urgente','prazo'], done:true },
+      { id:'tw1', text:'Fechar a campanha para o Hair Brasília com influenciadores',                    tags:['urgente'] },
+      { id:'tw2', text:'Fechar contrato com a Esther para designers para Cachos Brasil Academy',        tags:['urgente'] },
+      { id:'tw3', text:'Aprovar o catálogo de produtos da linha Soft para ser utilizado pela Nadia',   tags:['em-curso'] },
     ]},
-  { id:'julia',    name:'Julia Oliveira',          role:'Estratégia Portugal · Campanhas',         color:'#0891b2', emoji:'JO',
+  { id:'julia',    name:'Juliana Oliveira',        role:'Estratégia Portugal · Campanhas',         color:'#0891b2', emoji:'JO',
     tasks:[
       { id:'t8',  text:'Verificar feiras de inovação digital em Lisboa e Porto para lançamento do app', tags:['app'] },
-      { id:'t9',  text:'Entregar lista de eventos e feiras no Brasil para Wbatan e Ana Paula',           tags:['prazo'] },
-      { id:'t10', text:'Aguardar reunião Ana Paula + Ester para avançar com criativos e remarketing',    tags:['em-curso'] },
-    ]},
-  { id:'juliana',  name:'Juliana',                 role:'Academia Cachos Brasil (Portugal)',        color:'#059669', emoji:'JU',
-    tasks:[
-      { id:'t11', text:'Enviar e-mail para cadastro no Trello',                                         tags:['urgente'] },
-      { id:'t12', text:'Gerenciar demandas da Academia Cachos Brasil em Portugal',                       tags:['em-curso'] },
+      { id:'t10', text:'Aguardar reunião Ana Paula + Ester para avançar com criativos e remarketing',   tags:['em-curso'], done:true },
+      { id:'tj1', text:'Receber e integrar os acessos para perfis e contas Ads das duas redes (BR e PT)', tags:['urgente'] },
+      { id:'tj2', text:'Enviar o planejamento de estratégia para os dois perfis',                        tags:['urgente'] },
+      { id:'tj3', text:'Marcar a reunião de apresentação até a semana do dia 15/06',                     tags:['prazo'] },
     ]},
   { id:'jennifer', name:'Jennifer',                role:'E-commerce Portugal',                     color:'#d97706', emoji:'JE',
     tasks:[
-      { id:'t13', text:'Enviar e-mail para cadastro no Trello',                                         tags:['urgente'] },
+      { id:'t13', text:'Enviar e-mail para cadastro no Trello',                                         tags:['urgente'], done:true },
       { id:'t14', text:'Gerir e-commerce de Portugal',                                                  tags:['em-curso'] },
+      { id:'tj4', text:'Elaborar planejamento estratégico para e-commerce até 15/06',                   tags:['prazo'] },
+      { id:'tj5', text:'Entregar o planejamento de posts da semana do dia 06/06',                        tags:['urgente'] },
+      { id:'tj6', text:'Montar e subir a campanha para o Meta Ads de vendas no E-commerce',              tags:['em-curso'] },
+      { id:'tj7', text:'Montar e subir a campanha para o Google Ads de vendas do E-commerce',            tags:['em-curso'] },
     ]},
   { id:'duda',     name:'Duda (Maria Eduarda)',    role:'Social Media · Produção Audiovisual BR',  color:'#e11d48', emoji:'ME',
     tasks:[
-      { id:'t15', text:'Subir Shorts semanalmente (vídeos do Instagram → YouTube Shorts)',              tags:['yt','em-curso'] },
-      { id:'t16', text:'Alinhar nova data de gravação no Brasil com Ana Paula (após 16/06)',             tags:['prazo'] },
+      { id:'t15', text:'Subir Shorts semanalmente (vídeos do Instagram → YouTube Shorts)',              tags:['yt','em-curso'], done:true },
+      { id:'t16', text:'Alinhar nova data de gravação no Brasil com Ana Paula (após 16/06)',             tags:['prazo'], done:true },
+      { id:'td1', text:'Enviar proposta de datas para as próximas gravações',                           tags:['urgente'] },
+      { id:'td2', text:'Fazer reunião com Paula e Adriana para direcionamentos de gravações',            tags:['urgente'] },
+      { id:'td3', text:'Montar vídeo do Hair Brasília',                                                 tags:['urgente'] },
+      { id:'td4', text:'Ver opções de gravações com a Adriana a partir do dia 16/06',                   tags:['prazo'] },
+      { id:'td5', text:'Postar e publicar os conteúdos da semana',                                      tags:['em-curso'] },
     ]},
   { id:'jonas',    name:'Jonas Rocha',             role:'Design · Material offline Brasil',        color:'#4f46e5', emoji:'JR',
     tasks:[
-      { id:'t17', text:'Reestruturar e produzir materiais offline para franquias Brasil',               tags:['em-curso'] },
+      { id:'tjo1', text:'Elaborar o material da Campanha de Terapia Capilar para ser postado nos dias 10 e 12/06', tags:['urgente'] },
+      { id:'tjo2', text:'Criar o card da campanha de Copa do Mundo da unidade do Conic',                tags:['urgente'] },
+      { id:'tjo3', text:'Criar o card da campanha de Dia da Criança Africana para Angola',              tags:['urgente'] },
+      { id:'tjo4', text:'Concluir o envio dos materiais de janeiro a junho no drive da Cachos Brasil',  tags:['em-curso'] },
     ]},
   { id:'suzi',     name:'Suzi (Suzany)',           role:'Relacionamento com Franqueados',          color:'#0f766e', emoji:'SU',
     tasks:[
-      { id:'t18', text:'Enviar materiais semanais para as 12–13 franquias do Brasil',                   tags:['em-curso'] },
-      { id:'t19', text:'Centralizar demandas de marketing dos franqueados',                             tags:['em-curso'] },
+      { id:'t18', text:'Enviar materiais semanais para as 12–13 franquias do Brasil',                   tags:['em-curso'], done:true },
+      { id:'t19', text:'Centralizar demandas de marketing dos franqueados',                             tags:['em-curso'], done:true },
+      { id:'ts1', text:'Terminar de preencher as tabelas da campanha dos influenciadores com a Hair Brasília', tags:['urgente'] },
+      { id:'ts2', text:'Solicitar os materiais de respostas do dia 09 e 10/06',                         tags:['urgente'] },
+      { id:'ts3', text:'Terminar de atualizar a pasta dos franqueados com as artes de produtos',        tags:['em-curso'] },
+      { id:'ts4', text:'Reenviar o link com as artes para os franqueados',                              tags:['urgente'] },
+      { id:'ts5', text:'Atender as demandas dos franqueados da semana',                                 tags:['em-curso'] },
     ]},
   { id:'ester',    name:'Ester',                   role:'Direção de Arte (integração)',            color:'#7c3aed', emoji:'ES',
     tasks:[
-      { id:'t20', text:'Participar de reunião com Ana Paula e Julia para alinhar criativos Portugal',   tags:['urgente'] },
-      { id:'t21', text:'Apoiar demandas de arte da Academia conforme direcionamento de Ana Paula',      tags:['em-curso'] },
+      { id:'t20', text:'Participar de reunião com Ana Paula e Julia para alinhar criativos Portugal',   tags:['urgente'], done:true },
+      { id:'t21', text:'Apoiar demandas de arte da Academia conforme direcionamento de Ana Paula',      tags:['em-curso'], done:true },
     ]},
   { id:'grupo',    name:'Toda a equipe',           role:'Demandas coletivas',                      color:'#374151', emoji:'👥',
     tasks:[
@@ -510,7 +560,17 @@ const TEAM = [
 ];
 
 // ── STATE ──
-function getState(){ try{return JSON.parse(localStorage.getItem('cb_state2')||'{}')}catch{return{}} }
+function getState(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('cb_state2')||'{}');
+    // Merge defaults (done:true no array) com estado salvo
+    // Itens marcados done:true no array são pré-marcados se nunca tocados
+    const allTasks = [...MEU_TASKS, ...TEAM.flatMap(p=>p.tasks)];
+    const defaults = {};
+    allTasks.forEach(t=>{ if(t.done) defaults[t.id]=true; });
+    return Object.assign({}, defaults, saved);
+  }catch{return{}}
+}
 function saveState(s){ localStorage.setItem('cb_state2',JSON.stringify(s)) }
 function toggleItem(id){ const s=getState(); s[id]=!s[id]; saveState(s); render(); }
 
